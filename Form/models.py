@@ -1,20 +1,18 @@
 from django.db import models
 
 
-class Document(models.Model):
-    num = models.IntegerField()
-    fileName = models.CharField(max_length=255)
-    fileContent = models.TextField()
-    documentUrl = models.URLField()
+class Word(models.Model):
+    word = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.fileName
+        return self.word
 
 class SearchResult(models.Model):
-    document = models.ForeignKey(Document, on_delete=models.CASCADE)
+    tern = models.ForeignKey(Word, on_delete=models.CASCADE())
+    doc_path = models.URLField(null=False)
     relevanceScore = models.IntegerField()
 
     def __init__(self):
-        return f"(self.document.fileName) - {self.relevanceScore}"
+        return f"(self.doc_path.URLField) - {self.relevanceScore}"
 
 
