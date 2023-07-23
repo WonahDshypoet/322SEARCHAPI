@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
                 ('num', models.IntegerField()),
                 ('fileName', models.CharField(max_length=255)),
                 ('fileContent', models.TextField()),
-                ('documentUrl', models.URLField()),
+                ('url', models.URLField()),
             ],
         ),
         migrations.CreateModel(

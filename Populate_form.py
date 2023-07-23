@@ -1,25 +1,23 @@
 import os
+import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'SEARCHAPI_project.settings')
 
-import django
 django.setup()
-from .models import Document
+from Form.models import Document
 
 
-def populate():
-    Documents = [{
-        "num": '1',
-        "fileName": 'Day 1',
-        "fileContent": "Finesse, if I broke na my business",
-        "documentUrl": "C:\Users\hp\Documents\School pdf\Year 2 second\shypoet\word press\Godwin Wonah"
-    },
-        {
-            "num": '2',
-            "fileName": 'Day 1',
-            "fileContent": "seems I be Mr Money with the vibes right now",
-            "documentUrl": 'C/:\Users\hp\Documents\School pdf\Year 2 second\shypoet\word press\Godwin Wonah'
-        }]
+def populate(folderpath):
+    files = os.listdir(folderpath)
+
+    for filename in files:
+        with open(os.path.join(folderpath, filename), 'r') as file:
+            content = file.read()
+
+        title = os.path.splitext(filename)[0]
+        url = f'http:/{title}.com/'
+        document = Document.objects.create(fileName=filename, fileContent='', url=url)
+        document.save()
 
 if __name__ == '__main__':
-     print("Starting SEARCHAPI population script...")
-     populate()
+    folder_path = 'C:/Users/hp/Documents/School pdf/Year 2 second/shypoet/word press/Godwin Wonah'
+    populate(folder_path)
