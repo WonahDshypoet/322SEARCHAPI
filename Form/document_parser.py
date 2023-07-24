@@ -20,7 +20,7 @@ class DocumentParser:
         return phrase_sans_punct
 
     def parse(self, phrase_sans_punct):
-        content = phrase_sans_punct
+        content = phrase_sans_punct.split
         tokens = word_tokenize(content)
         stemmer = PorterStemmer()
         stemmed_tokens = [stemmer.stem(token) for token in tokens]
