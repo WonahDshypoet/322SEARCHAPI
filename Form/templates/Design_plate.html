@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>SEARCHAPI</title>
+    <style>
+         /* Styles for the entire body */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+
+         /* Styles for the header section */
+        header {
+            background-color: #fff;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+          /* Styles for the Google logo */
+        header img {
+            height: 40px; /* Set the appropriate height */
+        }
+
+         /* Styles for the search bar */
+        .search-bar {
+            max-width: 600px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        /* Styles for the search input field */
+        .search-bar input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+         /* Styles for the search buttons */
+        .search-bar input[type="submit"] {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4285F4;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+         /* Styles for the search buttons on hover */
+        .search-bar input[type="submit"]:hover {
+            background-color: #3367D6;
+        }
+
+         /* Styles for the main content */
+        main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+         /* Styles for the search results list items */
+        main ul li {
+            margin-bottom: 10px;
+            list-style: none;
+        }
+
+        /* Styles for the footer */
+        footer {
+            text-align: center;
+            background-color: #fff;
+            padding: 10px;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <meta charset="UTF-8">
+    <title>Design plate</title>
+
+</head>
+<body>
+       <header>
+           <h1>welcome to our search engine</h1>
+       </header>
+
+       <!-- Search Bar -->
+       <div class="search-bar">
+            <form action="/search" method="GET">
+                <input type="text" name="q" placeholder="Search Google">
+                <input type="submit" value="Google Search">
+                <input type="submit" value="I'm Feeling Lucky">
+            </form>
+        </div>
+
+
+       <main>
+           <P>
+               This is the main content of our design plate.</P>
+           <ul>
+               {% for item in items %}
+                   <li>{{ item }}</li>
+               {%end for %}
+           </ul>
+       </main>
+       <footer>
+            <p>>&copy; 2023 322SEARCHAPI</p>
+       </footer>
+</body>
+</html>
