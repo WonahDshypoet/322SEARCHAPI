@@ -8,32 +8,22 @@ class DocumentParser:
         self.document = document
 
     def remove_punctuation(self):
-
         phrase_sans_punct = ""
-
         for letter in self.document.fileContent:
-
             if letter not in string.punctuation:
-
                 phrase_sans_punct += letter
-
         return phrase_sans_punct
 
-    def parse(self, phrase_sans_punct):
-        content = phrase_sans_punct.split
-        tokens = word_tokenize(content)
+    def parse(self):
+        phrase_sans_punct = self.remove_punctuation()
         stemmer = PorterStemmer()
-        stemmed_tokens = [stemmer.stem(token) for token in tokens]
-        stopwords = ["the", "a", "an", "and", "but", "or", "for", "nor", "on", "at", "to", "from", "by", "with", "in", "of", "am", "I", "i", "my", "our", "has", "can", "been", "have", "that", "is", "isn't", "was", "that", "those", "these", "you", "me", "would"]
-        processed_words = []
-
-        for i in stemmed_tokens:
-            stemmed_tokens.sort()
-            if i != stopwords:
-                processed_words.append(i)
-
-        Counter = {}
+        stopwords = {"the", "a", "an", "and", "but", "or", "for", "nor", "on", "at", "to", "from", "by", "with", "in", "of", "am", "I", "i", "my", "our", "has", "can", "been", "have", "that", "is", "this", "isn't", "was", "that", "those", "these", "you", "me", "would"}
+        tokens = word_tokenize(phrase_sans_punct)
+        processed_words = [stemmer.stem(token) for token in tokens if token.lower() not in stopwords]
+        word_counter = {}
         for word in processed_words:
-            Counter[word] = Counter(word, 0) + 1
-
-        return Counter
+            if word in word_counter:
+                word_counter[word] += 1
+            else:
+                word_counter[word] = 1
+        return word_counter
