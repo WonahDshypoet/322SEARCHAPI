@@ -4,24 +4,31 @@
     <title>SEARCHAPI</title>
     <style>
          /* Styles for the entire body */
-        body {
-            font-family: Arial, sans-serif;
+        body, html {
+            background-image: url('boliviainteligente-oOP4Qo-jF3w-unsplash.jpg');
+            background-size: cover;
+            height: 100vh;
+            background-position: center;
+            background-repeat: no repeat;
+            height: 100%;
             margin: 0;
-            padding: 0;
-            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+        }
+
+        .homepage-container {
+
         }
 
          /* Styles for the header section */
         header {
-            background-color: #fff;
-            padding: 10px;
+            padding: 100px 550px 200px;
+            padding-bottom: 20px;
+            display: flex;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            color: #05D5FA ;
+            font-family: serif;
         }
 
-          /* Styles for the Google logo */
-        header img {
-            height: 40px; /* Set the appropriate height */
-        }
 
          /* Styles for the search bar */
         .search-bar {
@@ -32,36 +39,38 @@
 
         /* Styles for the search input field */
         .search-bar input[type="text"] {
-            width: 70%;
-            padding: 10px;
+            width: 100%;
+            padding: 12px;
             font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            border: 1px solid #dfe1e5;
+            border-radius: 24px;
+            box-shadow: none;
         }
 
          /* Styles for the search buttons */
         .search-bar input[type="submit"] {
             margin: 10px;
-            padding: 10px 20px;
+            padding: 12px 20px;
             font-size: 16px;
-            background-color: #4285F4;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
+            background-color: #f2f2f2;
+            color: #05D5FA;
+            border: 1px solid #f2f2f2;
+            border-radius: 24px;
             cursor: pointer;
+            background-image: none;
         }
 
          /* Styles for the search buttons on hover */
         .search-bar input[type="submit"]:hover {
-            background-color: #3367D6;
+            background-color: #f8f9fa;
         }
 
          /* Styles for the main content */
         main {
-            max-width: 800px;
+            max-width: 100px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #fff;
+            background-color: #f2f2f2;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
@@ -74,41 +83,39 @@
         /* Styles for the footer */
         footer {
             text-align: center;
-            background-color: #fff;
             padding: 10px;
             box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+            color: #05D5FA ;
         }
+
+        /* Styles for the Google logo */
+        header img {
+            width: 92px;
+            height: 32px;
+            margin-right: 10px;
+        }
+
+
     </style>
     <meta charset="UTF-8">
     <title>Design plate</title>
-
+     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
        <header>
-           <h1>welcome to our search engine</h1>
+           <h1>322SEARCHAPI</h1>
        </header>
 
        <!-- Search Bar -->
        <div class="search-bar">
             <form action="/search" method="GET">
-                <input type="text" name="q" placeholder="Search Google">
-                <input type="submit" value="Google Search">
-                <input type="submit" value="I'm Feeling Lucky">
+                <input type="text" name="q" placeholder="Search the Web">
+                <input type="submit" value="322 Search">
             </form>
         </div>
-
-
-       <main>
-           <P>
-               This is the main content of our design plate.</P>
-           <ul>
-               {% for item in items %}
-                   <li>{{ item }}</li>
-               {%end for %}
-           </ul>
-       </main>
-       <footer>
-            <p>>&copy; 2023 322SEARCHAPI</p>
-       </footer>
+        <footer>
+            <p>&copy; 2023 322SEARCHAPI - <a href="#">About</a> - <a href="#">Advertising</a> - <a href="#">Business</a> - <a href="#">How Search works</a></p>
+        </footer>
 </body>
 </html>
