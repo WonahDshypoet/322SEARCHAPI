@@ -2,6 +2,7 @@ from django.db import models
 
 
 class Document(models.Model):
+    Id = models.IntegerField()
     fileName = models.CharField(max_length=255)
     fileContent = models.TextField()
     url = models.URLField()
