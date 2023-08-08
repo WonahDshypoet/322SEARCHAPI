@@ -21,16 +21,20 @@ class Query:
                     if lemma.name() != term:
                         expanded_query.append(lemma.name())
 
-        # Combine the expanded terms with the original query
-        self.query = ' '.join(expanded_query)
+            # Combine the expanded terms with the original query
+            self.query = ' '.join(expanded_query)
 
     def set_query(self, query):
         # Convert the query to lowercase for case-insensitive search
         query = query.lower()
         stemmer = PorterStemmer()
         tokens = word_tokenize(query)
-        stemmed_query = ' '.join([stemmer.stem(token) for token in tokens])
+        stemmed_tokens = [stemmer.stem(token) for token in tokens]
+        stemmed_query = ' '.join(stemmed_tokens)
         self.query = stemmed_query
+
+    def search_phrase(self, phrase):
+        return self.indexer.search_phrase(phrase)
 
     def execute(self):
         """
@@ -39,19 +43,18 @@ class Query:
         if not self.query:
             return set()  # Return an empty set if the query is not set
 
-        query_terms = re.findall(r'"([^"]+)"|\S+', self.query)
+        query_terms = self.indexer.document_parser.parse_query(self.query)
         matching_documents = set()
         boolean_operators = {'AND', 'OR', 'NOT'}
         boolean_terms = []
         current_operator = 'AND'  # Default operator if none is specified
 
         for term in query_terms:
-            if term.startswith('"') and term.endswith('"'):
-                # Phrase search
-                phrase = term[1:-1]
-                matching_documents.update(self.indexer.search_phrase(phrase))
-            elif term in boolean_operators:
+            if term in boolean_operators:
                 current_operator = term
+            elif not term.startswith('"') and not term.endswith('"'):
+                # Single-word term search
+                matching_documents.update(self.indexer.search_index(term))
             else:
                 boolean_terms.append((current_operator, term))
 
