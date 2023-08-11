@@ -43,6 +43,7 @@ class Query:
         if not self.query:
             return set()  # Return an empty set if the query is not set
 
+        query = query.set_query(self.query)
         query_terms = self.indexer.document_parser.parse_query(self.query)
         matching_documents = set()
         boolean_operators = {'AND', 'OR', 'NOT'}

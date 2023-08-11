@@ -12,10 +12,15 @@ class Indexer:
         """
         word_count = self.document_parser.parse()
         for word, count in word_count.items():
+            posting = {
+                'document_id': document.id,
+                'frequency': count,
+                'positions': self.document_parser.get_word_positions(document, word),
+            }
             if word in self.inverted_index:
-                self.inverted_index[word].append((document.fileName, count))
+                self.inverted_index[word]['postings'].append(posting)
             else:
-                self.inverted_index[word] = [(document.fileName, count)]
+                self.inverted_index[word] = {'word': word, 'postings': [posting]}
 
     def remove_document_from_index(self, document):
         """
@@ -37,13 +42,14 @@ class Indexer:
     def search_index(self, query):
         """
         Search the inverted index for documents that match the query.
+
         """
         query_terms = self.document_parser.parse_query(query)
         result_docs = set()
         for term in query_terms:
             if term in self.inverted_index:
                 postings_list = self.inverted_index[term]
-                result_docs.update(doc_id for doc_id, _ in postings_list)
+                result_docs.update(doc_fileName for doc_fileName in postings_list)
         return result_docs
 
     def get_term_frequency(self, term, document_id):
@@ -69,5 +75,5 @@ class Indexer:
         """
         Get the total number of documents in the inverted index.
         """
-        return len(set(doc_id for postings_list in self.inverted_index.values() for doc_id, _ in postings_list))
+        return len(set(doc_id for postings_list in self.inverted_index.values() for doc_id in postings_list))
 
