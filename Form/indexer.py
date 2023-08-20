@@ -1,4 +1,12 @@
+from .models import Docinfo, Word
+
+
 class Indexer:
+    """
+    Creates the inverted_index, adds to the inverted_index, removes from the inverted_index
+    Updates the inverted_index, searches the inverted_index, gets total term frequency
+    Gets num of docs words from query appears in, gets total document frequency
+    """
     def __init__(self, document_parser, inverted_index=None):
         self.document_parser = document_parser
         if inverted_index is None:
@@ -17,10 +25,15 @@ class Indexer:
                 'frequency': count,
                 'positions': self.document_parser.get_word_positions(document, word),
             }
-            if word in self.inverted_index:
-                self.inverted_index[word]['postings'].append(posting)
+            word = Docinfo.objects.filter(term__word__contains=word)
+            if word.exists():
+                update = posting
+                update.save()
             else:
-                self.inverted_index[word] = {'word': word, 'postings': [posting]}
+                q = Word(word=word)
+                q.save()
+                update = posting
+                update.save()
 
     def remove_document_from_index(self, document):
         """
@@ -29,7 +42,7 @@ class Indexer:
         word_count = self.document_parser.parse()
         for word, count in word_count.items():
             postings_list = self.inverted_index[word]
-            postings_list = [(doc_id, freq) for doc_id, freq in postings_list if doc_id != document.fileName]
+            postings_list = [(doc_id, freq) for doc_id, freq in postings_list if doc_id != document.id]
             self.inverted_index[word] = postings_list
 
     def update_document_in_index(self, document):
@@ -42,7 +55,6 @@ class Indexer:
     def search_index(self, query):
         """
         Search the inverted index for documents that match the query.
-
         """
         query_terms = self.document_parser.parse_query(query)
         result_docs = set()
@@ -61,7 +73,7 @@ class Indexer:
             for doc_id, freq in postings_list:
                 if doc_id == document_id:
                     return freq
-        return 0
+                return 0
 
     def get_document_frequency(self, term):
         """

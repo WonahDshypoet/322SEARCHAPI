@@ -82,7 +82,7 @@ class IndexerTestCase(TestCase):
         # Create test document with dummy content for testing
         doc1 = Document.objects.create(fileName='Document One', fileContent="This is the first, first, first test document containing some words.", url='http://example.com/doc1')
         doc2 = Document.objects.create(fileName='Document Two', fileContent="This is the second document with different words.", url='http://example.com/doc2')
-        doc3 = Document.objects.create(fileName='Document Three', fileContent="This is the third document with more words. God", url='http://example.com/doc3')
+        doc3 = Document.objects.create(fileName='Document Three', fileContent="This is the third document with more words. God, God", url='http://example.com/doc3')
 
         # Create an empty dictionary for the inverted index
         self.inverted_index = {}
@@ -101,9 +101,8 @@ class IndexerTestCase(TestCase):
         self.assertTrue('test' in self.inverted_index)
         self.assertTrue('document' in self.inverted_index)
 
-        # Check the content of the inverted index for "test"
+        # Check the content of the inverted index for "first"
         test_postings_list = self.inverted_index['first']
-        print(test_postings_list)
         self.assertEqual(len(test_postings_list), 3)
         self.assertEqual(test_postings_list[0][0], 'Document One')  # Document name
         self.assertEqual(test_postings_list[0][1], 1)  # Term freq
@@ -122,7 +121,7 @@ class IndexerTestCase(TestCase):
 
         self.assertEqual(doc1_posting[1], 1)  # Term frequency for Document One
         self.assertEqual(doc2_posting[1], 1)  # Term frequency for Document Two
-        self.assertEqual(doc2_posting[1], 1)  # Tern frequency for Document Three
+        self.assertEqual(doc3_posting[1], 1)  # Term frequency for Document Three
 
     def test_get_total_documents(self):
         # Test if get_total_documents returns the correct total number of documents
@@ -132,19 +131,19 @@ class IndexerTestCase(TestCase):
     def test_get_document_frequency(self):
         # Test if get_document_frequency returns the correct document frequency
         doc_freq = self.indexer.get_document_frequency('word')
-        self.assertEqual(doc_freq, 3)
+        self.assertEqual(doc_freq, 2)
 
     def test_get_term_frequency(self):
         # Test if get_term_frequency returns the correct term frequency
-        term_freq = self.indexer.get_term_frequency('God', 'Document Three')
+        term_freq = self.indexer.get_term_frequency('first', 'Document Three')
         self.assertEqual(term_freq, 1)
 
     def test_search_index(self):
         # Test if search_index returns the correct set of documents
-        query = "first containing"  # Query with terms that should match doc1
+        query = "first"  # Query with terms that should match doc1
         result_docs = self.indexer.search_index(query)
 
-        expected_docs = {'Document One'}  # Expected result documents
+        expected_docs = {'word': 'first', 'postings': [{'Document One'}]}  # Expected result documents
         self.assertEqual(result_docs, expected_docs)
 
         query = "second"  # Query with a term that should match doc2

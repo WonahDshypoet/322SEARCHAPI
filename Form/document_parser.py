@@ -36,7 +36,7 @@ class DocumentParser:
         stemmer = PorterStemmer()
         stopwords = {"the", "a", "an", "and", "but", "or", "for", "nor", "on", "at", "to", "from", "by", "with", "in",
                      "of", "am", "i", "my", "our", "has", "can", "been", "have", "that", "is", "this", "isn't", "was",
-                     "that", "those", "these", "you", "me", "would"}  # Your set of stopwords
+                     "that", "those", "these", "you", "me", "would"}  # set of stopwords
         tokens = word_tokenize(phrase_sans_punct)
         processed_words = [stemmer.stem(token) for token in tokens if token.lower() not in stopwords]
         return processed_words
@@ -53,8 +53,10 @@ class DocumentParser:
                 inverted_index[word] = [(self.document.fileName, count)]
 
     def get_word_positions(self, document, word):
-        # Implement the logic to retrieve positions of the given word in the document
-        # You can return a list of positions or None if not found
+        """
+         Implement the logic to retrieve positions of the given word in the document
+         You can return a list of positions or None if not found
+        """
         positions = []
         words = self.remove_punctuation(document.fileContent).lower().split()
         for i, w in enumerate(words):
