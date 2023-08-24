@@ -80,48 +80,40 @@ class DocumentModelTestCase(TestCase):
 class IndexerTestCase(TestCase):
     def setUp(self):
         # Create test document with dummy content for testing
-        doc1 = Document.objects.create(fileName='Document One', fileContent="This is the first, first, first test document containing some words.", url='http://example.com/doc1')
-        doc2 = Document.objects.create(fileName='Document Two', fileContent="This is the second document with different words.", url='http://example.com/doc2')
-        doc3 = Document.objects.create(fileName='Document Three', fileContent="This is the third document with more words. God, God", url='http://example.com/doc3')
+        self.doc1 = Document.objects.create(fileName='Document One', fileContent="This is the first, first, first test document containing some words.", url='http://example.com/doc1')
+        self.doc2 = Document.objects.create(fileName='Document Two', fileContent="This is the second document with different words.", url='http://example.com/doc2')
+        self.doc3 = Document.objects.create(fileName='Document Three', fileContent="This is the third document with more words. God, God", url='http://example.com/doc3')
 
         # Create an empty dictionary for the inverted index
         self.inverted_index = {}
         # Create an instance of the DocumentParser and Indexer
-        self.document_parser1 = DocumentParser(doc1)
-        self.document_parser2 = DocumentParser(doc2)
-        self.document_parser3 = DocumentParser(doc3)
+        self.document_parser1 = DocumentParser(self.doc1)
+        self.document_parser2 = DocumentParser(self.doc2)
+        self.document_parser3 = DocumentParser(self.doc3)
         self.indexer = Indexer(self.document_parser1, self.inverted_index)
         # Add the documents to the inverted index
-        self.indexer.add_document_to_index(doc1)
-        self.indexer.add_document_to_index(doc2)
-        self.indexer.add_document_to_index(doc3)
+        self.indexer.add_document_to_index(self.doc1)
+        self.indexer.add_document_to_index(self.doc2)
+        self.indexer.add_document_to_index(self.doc3)
 
     def test_add_document_to_index(self):
         # Test if documents are added to the inverted index correctly
-        self.assertTrue('test' in self.inverted_index)
-        self.assertTrue('document' in self.inverted_index)
+        # Verify that the inverted index contains the expected data for the document
+        self.assertTrue('first' in self.indexer.inverted_index)
+        self.assertEqual(len(self.indexer.inverted_index['first']), 3)
+        self.assertEqual(self.indexer.inverted_index['first'][0]['document_id'], self.doc1.id)
+        self.assertEqual(self.indexer.inverted_index['first'][0]['frequency'], 3)
+        self.assertEqual(self.indexer.inverted_index['first'][0]['positions'], [3, 4, 5])
 
-        # Check the content of the inverted index for "first"
-        test_postings_list = self.inverted_index['first']
-        self.assertEqual(len(test_postings_list), 3)
-        self.assertEqual(test_postings_list[0][0], 'Document One')  # Document name
-        self.assertEqual(test_postings_list[0][1], 1)  # Term freq
+        # Add another document to the inverted index
+        self.indexer.add_document_to_index(self.doc2)
 
-        # Check the content of the inverted index for 'document'
-        document_postings_list = self.inverted_index['document']
-        self.assertEqual(len(document_postings_list), 3)
-
-        doc1_posting = next((posting for posting in document_postings_list if posting[0] == 'Document One'), None)
-        doc2_posting = next((posting for posting in document_postings_list if posting[0] == 'Document Two'), None)
-        doc3_posting = next((posting for posting in document_postings_list if posting[0] == 'Document Three'), None)
-
-        self.assertIsNotNone(doc1_posting)
-        self.assertIsNotNone(doc2_posting)
-        self.assertIsNotNone(doc3_posting)
-
-        self.assertEqual(doc1_posting[1], 1)  # Term frequency for Document One
-        self.assertEqual(doc2_posting[1], 1)  # Term frequency for Document Two
-        self.assertEqual(doc3_posting[1], 1)  # Term frequency for Document Three
+        # Verify that the inverted index contains the expected data for both documents
+        self.assertTrue('second' in self.indexer.inverted_index)
+        self.assertEqual(len(self.indexer.inverted_index['second']), 1)
+        self.assertEqual(self.indexer.inverted_index['second'][0]['document_id'], self.doc2.id)
+        self.assertEqual(self.indexer.inverted_index['second'][0]['frequency'], 1)
+        self.assertEqual(self.indexer.inverted_index['second'][0]['positions'], [3])
 
     def test_get_total_documents(self):
         # Test if get_total_documents returns the correct total number of documents
@@ -131,11 +123,11 @@ class IndexerTestCase(TestCase):
     def test_get_document_frequency(self):
         # Test if get_document_frequency returns the correct document frequency
         doc_freq = self.indexer.get_document_frequency('word')
-        self.assertEqual(doc_freq, 2)
+        self.assertEqual(doc_freq, 3)
 
     def test_get_term_frequency(self):
         # Test if get_term_frequency returns the correct term frequency
-        term_freq = self.indexer.get_term_frequency('first', 'Document Three')
+        term_freq = self.indexer.get_term_frequency('word', 'Document One')
         self.assertEqual(term_freq, 1)
 
     def test_search_index(self):

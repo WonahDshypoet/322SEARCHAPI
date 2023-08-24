@@ -1,4 +1,4 @@
-from .models import Docinfo, Word
+from .models import InvertedIndex, Word
 
 
 class Indexer:
@@ -20,29 +20,17 @@ class Indexer:
         """
         word_count = self.document_parser.parse()
         for word, count in word_count.items():
-            posting = {
-                'document_id': document.id,
-                'frequency': count,
-                'positions': self.document_parser.get_word_positions(document, word),
-            }
-            word = Docinfo.objects.filter(term__word__contains=word)
-            if word.exists():
-                update = posting
-                update.save()
-            else:
-                q = Word(word=word)
-                q.save()
-                update = posting
-                update.save()
+            inverted_index, created = InvertedIndex.objects.get_or_create(term=Word.objects.get_or_create(word=word)[0])
+            inverted_index.documents.add(document)
 
     def remove_document_from_index(self, document):
         """
         Remove a document from the inverted index.
         """
-        word_count = self.document_parser.parse()
-        for word, count in word_count.items():
+        for word in self.inverted_index.keys():
             postings_list = self.inverted_index[word]
-            postings_list = [(doc_id, freq) for doc_id, freq in postings_list if doc_id != document.id]
+            postings_list = [(doc_id, freq, positions) for doc_id, freq, positions in postings_list if
+                             doc_id != document.id]
             self.inverted_index[word] = postings_list
 
     def update_document_in_index(self, document):
@@ -61,7 +49,8 @@ class Indexer:
         for term in query_terms:
             if term in self.inverted_index:
                 postings_list = self.inverted_index[term]
-                result_docs.update(doc_fileName for doc_fileName in postings_list)
+                for doc_info in postings_list:
+                    result_docs.add(doc_info['fileName'])
         return result_docs
 
     def get_term_frequency(self, term, document_id):
@@ -70,10 +59,10 @@ class Indexer:
         """
         if term in self.inverted_index:
             postings_list = self.inverted_index[term]
-            for doc_id, freq in postings_list:
+            for doc_id, freq, position in postings_list:
                 if doc_id == document_id:
                     return freq
-                return 0
+        return 0
 
     def get_document_frequency(self, term):
         """
@@ -87,5 +76,8 @@ class Indexer:
         """
         Get the total number of documents in the inverted index.
         """
-        return len(set(doc_id for postings_list in self.inverted_index.values() for doc_id in postings_list))
+        return len(set(
+            posting['document_id'] for postings_list in self.inverted_index.values() for posting in postings_list))
+
+
 
