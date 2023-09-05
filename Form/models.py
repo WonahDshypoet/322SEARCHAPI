@@ -18,7 +18,7 @@ class Word(models.Model):
 
 
 class InvertedIndex(models.Model):
-    term = models.ForeignKey(Word, on_delete=models.CASCADE)
+    term = models.CharField(max_length=255, unique=True)
     documents = models.ManyToManyField(Document)
 
     def __str__(self):

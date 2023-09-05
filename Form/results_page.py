@@ -24,6 +24,7 @@ class ResultsPage:
     def display_results(self, search_results):
         # Implement the logic to display the search results on the page
         self.results = search_results
+        
         for result in self.results:
             print(f"Title: {result['title']}")
             print(f"URL: {result['url']}")

@@ -1,63 +1,48 @@
 from django.shortcuts import render
-from .models import Document
+from django.views import View
+from .forms import SearchForm
+from .document_parser import DocumentParser
 from .indexer import Indexer
 from .query import Query
 from .ranking import Ranking
 from .results_page import ResultsPage
-from .models import Docinfo, Word
-from .document_parser import DocumentParser
+from .models import Document, InvertedIndex
 
 
-def Add_Document(request, document):
-    parse = DocumentParser(document)
-    content = parse.parse()
-    for key, value in content:
-        word = Docinfo.objects.filter(term__word__contains=word)
-        if word.exists():
-            term = Word.objects.get(word=word)
-            id = term.id
-            update = Docinfo(term_id=id, doc_path=document, frequency=frequency)
-            update.save()
+class SearchView(View):
+    template_name = 'search.html'
 
-        else:
-            frequency = value
-            q = Word(word=word)
-            q.save()
-            term = Word.objects.get(word=word)
-            id = term.id
-            update = Docinfo(term_id=id, doc_path=document, frequency=frequency)
-            update.save()
+    def get(self, request):
+        form = SearchForm()
+        return render(request, self.template_name, {'form': form, 'results': []})
 
-
-
-
-'''
-def search_view(request):
-    results = []
-    if request.method == 'POST':
+    def post(self, request):
         form = SearchForm(request.POST)
+        results = []
+
         if form.is_valid():
             query_string = form.cleaned_data['query']
 
-            # Assuming you have already initialized the Indexer object
-            indexer = Indexer(document_parser, db_repository)
+            # Create a document parser and indexer
+            document_parser = DocumentParser(Document)
+            indexer = Indexer(document_parser, InvertedIndex)
+
+            # Create a query and set the query string
             query = Query(indexer)
             query.set_query(query_string)
 
             # Execute the query and get the search results
             search_results = query.execute()
 
-            # Assuming you have already initialized the Ranking object
+            # Run ranking algorithm
             ranking = Ranking(indexer)
             ranked_results = ranking.rank_results(query, search_results)
 
-            # Display the results using the ResultsPage class
+            # Create an instance of ResultsPage and display the results
             results_page = ResultsPage()
             results_page.display_results(ranked_results)
 
-            # Populate the 'results' list with the ranked search results
-            results = ranked_results
-    else:
-        form = SearchForm()
+            # Retrieve the results for passing to the template
+            results = results_page.results
 
-    return render(request, 'search_results.html', {'form': form, 'results': results})'''''
+        return render(request, self.template_name, {'form': form, 'results': results})
